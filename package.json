@@ -22,7 +22,7 @@
     "version": ">=3.0.2"
   },
   "engines": {
-    "node": ">=14.17.4"
+    "node": ">=12.0.0"
   },
   "author": "Dirk-Jan Faber <dfaber@victronenergy.com>",
   "license": "GPL-3.0-or-later",
@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/dirkjanfaber/node-red-contrib-victron-vedirect-usb#readme",
   "dependencies": {
-    "@serialport/bindings": "^10.0.0",
-    "serialport": "^10.0.0"
+    "@serialport/bindings": "~10.0.0",
+    "serialport": "~10.0.0"
   }
 }
