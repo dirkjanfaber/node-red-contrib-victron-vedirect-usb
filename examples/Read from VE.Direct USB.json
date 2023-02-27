@@ -1,0 +1,70 @@
+[
+    {
+        "id": "2b846580860dc65c",
+        "type": "tab",
+        "label": "Flow 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "1e16a853db4ee92d",
+        "type": "victron-vedirect-usb",
+        "z": "2b846580860dc65c",
+        "name": "",
+        "port": "/dev/ttyUSB0",
+        "x": 390,
+        "y": 320,
+        "wires": [
+            [
+                "a145b12a5d20c03f"
+            ]
+        ]
+    },
+    {
+        "id": "57af26c6c87b120e",
+        "type": "inject",
+        "z": "2b846580860dc65c",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 320,
+        "wires": [
+            [
+                "1e16a853db4ee92d"
+            ]
+        ]
+    },
+    {
+        "id": "a145b12a5d20c03f",
+        "type": "debug",
+        "z": "2b846580860dc65c",
+        "name": "VE.Direct parsed",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 590,
+        "y": 320,
+        "wires": []
+    }
+]

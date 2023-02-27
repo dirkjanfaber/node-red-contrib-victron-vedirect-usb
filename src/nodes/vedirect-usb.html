@@ -1,0 +1,84 @@
+<script type="text/javascript">
+
+var portsUrl = (RED.settings.httpNodeRoot || RED.settings.httpAdminRoot || "").replace(/\/$/, "") + '/victron/vedirect-ports/';
+
+function buildEditPanel(node) {
+    var buildOption = function buildOption(port) {
+        return $('<option/>').val(port.path).text(port.path).data(port);
+    };
+
+    var populateSelect = function populateSelect(selector, ports) {
+        selector[0].options.length = 0;
+        ports.forEach(function (port) {
+            selector.append(buildOption(port));
+        });
+        selector.trigger('change');
+    };
+    
+    $.ajax(portsUrl, {
+            beforeSend: function(jqXHR) {
+                var auth_tokens = RED.settings.get("auth-tokens");
+                if (auth_tokens) {
+                    jqXHR.setRequestHeader("Authorization","Bearer "+auth_tokens.access_token);
+                }
+            }
+        })
+        .done(data => {
+            if (data.length !== 0) {
+                populateSelect($('#node-input-port'), data);
+            }
+            if (node.port) { $('#node-input-port').val(node.port) }
+
+        }).fail(function () {
+            return showStatusMessage("Unable to access the service endpoint.");
+        });
+        
+}
+    RED.nodes.registerType('victron-vedirect-usb',{
+        category: 'Victron Energy',
+        paletteLabel: 'VE.Direct USB',
+        color: '#f7ab3e',
+        defaults: {
+            name: {value: ""},
+            port: {value: "/dev/ttyUSB0"}        },
+        inputs: 1,
+        outputs: 1,
+        icon: "victronenergy.svg",
+        label: function() {
+            return this.name||"VE.Direct USB";
+        },
+        oneditprepare: function oneditprepare() {
+            buildEditPanel(this);
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="victron-vedirect-usb">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-port"><i class="fa fa-tag"></i> Port</label>
+        <select id="node-input-port" required>
+        </select>     
+        </div>
+</script>
+
+<script type="text/html" data-help-name="victron-vedirect-usb">
+  <p>A node for VE.Direct USB communication with Victron devices.</p>
+
+  <h3>Configuration</h3>
+
+  <p>Only needed configuration is to select the port where the ttyUSB dongle
+    is connected to. Make sure that you have rights for reading the dongle
+    (this might need you to be in group <tt>dialup</tt>).
+  </p>
+
+  <h3>Input</h3>
+
+  <p>On each input, the read output gets send out. So use an repeating 
+    inject node to get output every x seconds.
+  </p>
+
+</script>
