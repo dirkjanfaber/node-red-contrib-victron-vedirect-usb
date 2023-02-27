@@ -1,5 +1,5 @@
 This node uses a [VE.Direct USB connection](https://www.victronenergy.com/accessories/ve-direct-to-usb-interface)
-to grab the communication on the serial port and trnaslates it into usable data.
+to grab the communication on the serial port and translates it into usable data.
 
 A typical use case would be to run Node-RED on a Raspberry Pi and
 connect to the VE.Direct port of a Victron Energy device. E.g. a
