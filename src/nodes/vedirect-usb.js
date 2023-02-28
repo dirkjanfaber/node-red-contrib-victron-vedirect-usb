@@ -22,10 +22,11 @@ module.exports = function (RED) {
         nodeContext.set('d2', data)
         msg.payload = Object.assign({}, data, nodeContext.get('d1'))
       }
+      node.status({ fill: 'green', shape: 'dot', text: '' })
     })
 
     dataReader.on('error', (error) => {
-      console.error(error)
+      node.status({ fill: 'red', shape: 'dot', text: error })
       node.warn(error)
     })
 
@@ -43,14 +44,20 @@ module.exports = function (RED) {
   RED.nodes.registerType('victron-vedirect-usb', VEDirectUSB)
 
   RED.httpNode.get('/victron/vedirect-ports', (req, res) => {
+    const vedirectports = []
+
     function list (ports) {
       res.setHeader('Content-Type', 'application/json')
-      return res.send(ports)
+      ports.forEach((port) => {
+        if (port.manufacturer === 'VictronEnergy BV') {
+          vedirectports.push(port)
+        }
+      })
+      return res.send(vedirectports)
     }
 
     bindings.list().then(list, err => {
       console.log(err)
-      process.exit(1)
     })
   })
 }
