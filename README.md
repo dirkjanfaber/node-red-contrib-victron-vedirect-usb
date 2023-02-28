@@ -42,7 +42,8 @@ The above example is abbreviated. It typically consists of more labels.
 
 # Status
 
-The node shows a green dot when functional. It shows a
+The node shows a green dot with the connected product when functional. It will
+show a red dot with the error message when something went wrong.
 
 # License
 
