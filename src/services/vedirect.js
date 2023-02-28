@@ -12,6 +12,10 @@ class VEDirect extends EventEmitter {
       baudRate: 19200,
       dataBits: 8,
       parity: 'none'
+    }, false)
+
+    this.serial.on('error', function(err) {
+      console.log(err)
     })
 
     this.rl = new DelimiterParser({
