@@ -14,7 +14,6 @@ function buildEditPanel(node) {
         });
         selector.trigger('change');
     };
-    
     $.ajax(portsUrl, {
             beforeSend: function(jqXHR) {
                 var auth_tokens = RED.settings.get("auth-tokens");
@@ -32,7 +31,6 @@ function buildEditPanel(node) {
         }).fail(function () {
             return showStatusMessage("Unable to access the service endpoint.");
         });
-        
 }
     RED.nodes.registerType('victron-vedirect-usb',{
         category: 'Victron Energy',
@@ -61,7 +59,7 @@ function buildEditPanel(node) {
     <div class="form-row">
         <label for="node-input-port"><i class="fa fa-tag"></i> Port</label>
         <select id="node-input-port" required>
-        </select>     
+        </select>
         </div>
 </script>
 
@@ -77,8 +75,13 @@ function buildEditPanel(node) {
 
   <h3>Input</h3>
 
-  <p>On each input, the read output gets send out. So use an repeating 
+  <p>On each input, the read output gets send out. So use an repeating
     inject node to get output every x seconds.
   </p>
+
+  <h3>Status</h3>
+
+  <p>The status shows a green dot when when the node is functioning properly.
+  It will show a red dot with an error message when something is wrong.</p>
 
 </script>
