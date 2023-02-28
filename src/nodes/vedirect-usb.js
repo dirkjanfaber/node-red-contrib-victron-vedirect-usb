@@ -22,7 +22,9 @@ module.exports = function (RED) {
         nodeContext.set('d2', data)
         msg.payload = Object.assign({}, data, nodeContext.get('d1'))
       }
-      node.status({ fill: 'green', shape: 'dot', text: '' })
+      if (msg.payload.PID) {
+        node.status({ fill: 'green', shape: 'dot', text: msg.payload.PID.product || '' })
+      }
     })
 
     dataReader.on('error', (error) => {

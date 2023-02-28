@@ -4,7 +4,7 @@ var portsUrl = (RED.settings.httpNodeRoot || RED.settings.httpAdminRoot || "").r
 
 function buildEditPanel(node) {
     var buildOption = function buildOption(port) {
-        return $('<option/>').val(port.path).text(port.path).data(port);
+        return $('<option/>').val(port.path).text(port.path+' ('+port.serialNumber+')').data(port);
     };
 
     var populateSelect = function populateSelect(selector, ports) {
@@ -81,7 +81,8 @@ function buildEditPanel(node) {
 
   <h3>Status</h3>
 
-  <p>The status shows a green dot when when the node is functioning properly.
+  <p>The status shows a green dot with the connected product when when the
+  node is functioning properly.
   It will show a red dot with an error message when something is wrong.</p>
 
 </script>
