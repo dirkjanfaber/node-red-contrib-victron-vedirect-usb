@@ -1,6 +1,8 @@
 This node uses a [VE.Direct USB connection](https://www.victronenergy.com/accessories/ve-direct-to-usb-interface)
 to grab the communication on the serial port and translates it into usable data.
 
+![Example flow](img/example-flow.png)
+
 A typical use case would be to run Node-RED on a Raspberry Pi and
 connect to the VE.Direct port of a Victron Energy device. E.g. a
 SmartShunt, BMV, Inverter or MPPT.
@@ -11,6 +13,10 @@ Once the node gets deployed it keeps on reading and stores the values as they
 get read from the serial port. It only outputs on 'inject', so it is needed to
 trigger output via an _inject_ node to the node. Typically you would configure
 that to repeat on an interval of a few seconds.
+
+Note that, when using this from a GX device, it requires you to disable `serial-starter`
+from using the VE.Direct usb cable. The way to accomplish this is described
+[here](https://github.com/victronenergy/venus/wiki/howto-add-a-driver-to-Venus#howto-make-serial-starter-ignore-certain-usb-types).
 
 # Configuration
 
