@@ -14,7 +14,7 @@ class VEDirect extends EventEmitter {
       parity: 'none'
     }, false)
 
-    this.serial.on('error', function(err) {
+    this.serial.on('error', function (err) {
       console.log(err)
     })
 
