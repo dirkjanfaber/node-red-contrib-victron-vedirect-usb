@@ -1,7 +1,7 @@
 module.exports = function (RED) {
   'use strict'
   const VEDirect = require('../services/vedirect')
-  const bindings = require('@serialport/bindings')
+  const bindings = require('@serialport/bindings-cpp')
 
   function VEDirectUSB (config) {
     RED.nodes.createNode(this, config)
