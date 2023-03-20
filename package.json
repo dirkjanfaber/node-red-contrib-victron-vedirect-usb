@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/dirkjanfaber/node-red-contrib-victron-vedirect-usb#readme",
   "dependencies": {
-    "@serialport/bindings-cpp": "^10.0.1",
+    "serialport": "^10.0.1",
     "@serialport/parser-delimiter": "^10.5.0",
     "serialport": "~10.5.0"
   }

@@ -1,7 +1,7 @@
 module.exports = function (RED) {
   'use strict'
   const VEDirect = require('../services/vedirect')
-  const bindings = require('@serialport/bindings-cpp')
+  const { SerialPort } = require('serialport')
 
   function VEDirectUSB (config) {
     RED.nodes.createNode(this, config)
@@ -58,7 +58,7 @@ module.exports = function (RED) {
       return res.send(vedirectports)
     }
 
-    bindings.list().then(list, err => {
+    SerialPort.list().then(list, err => {
       console.log(err)
     })
   })
