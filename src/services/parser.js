@@ -60,6 +60,20 @@ const products = {
   '0xA06F': 'BlueSolar MPPT 150|45 rev2',
   '0xA070': 'BlueSolar MPPT 150|60 rev2',
   '0xA071': 'BlueSolar MPPT 150|70 rev2',
+  '0xA072': 'BlueSolar MPPT 150/45 rev3',
+  '0xA073': 'SmartSolar MPPT 150/45 rev3',
+  '0xA074': 'SmartSolar MPPT 75/10 rev2',
+  '0xA075': 'SmartSolar MPPT 75/15 rev2',
+  '0xA076': 'BlueSolar MPPT 100/30 rev3',
+  '0xA077': 'BlueSolar MPPT 100/50 rev3',
+  '0xA078': 'BlueSolar MPPT 150/35 rev3',
+  '0xA079': 'BlueSolar MPPT 75/10 rev2',
+  '0xA07A': 'BlueSolar MPPT 75/15 rev2',
+  '0xA07B': 'BlueSolar MPPT 100/15 rev2',
+  '0xA07C': 'BlueSolar MPPT 75/10 rev3',
+  '0xA07D': 'BlueSolar MPPT 75/15 rev3',
+  '0xA07E': 'SmartSolar MPPT 100/30 12V',
+  '0xA07F': 'All-In-1 SmartSolar MPPT 75/15 12V',
   '0xA102': 'SmartSolar MPPT VE.Can 150/70',
   '0xA103': 'SmartSolar MPPT VE.Can 150/45',
   '0xA104': 'SmartSolar MPPT VE.Can 150/60',
@@ -140,7 +154,8 @@ const products = {
   '0xA383': 'BMV-712 Smart Rev2',
   '0xA389': 'SmartShunt 500A/50mV',
   '0xA38A': 'SmartShunt 1000A/50mV',
-  '0xA38B': 'SmartShunt 2000A/50mV'
+  '0xA38B': 'SmartShunt 2000A/50mV',
+  '0xA3F0': 'Smart BuckBoost 12V/12V-50A'
 }
 
 const parseValues = (frame) => {
@@ -565,6 +580,27 @@ const parseValues = (frame) => {
           value: frame[key],
           description: 'DC monitor mode',
           units: ''
+        }
+        break
+      case 'DC_IN_V':
+        frame[key] = {
+          value: frame[key],
+          description: 'DC input voltage',
+          units: '0.01 V'
+        }
+        break
+      case 'DC_IN_I':
+        frame[key] = {
+          value: frame[key],
+          description: 'DC input current',
+          units: '0.1 A'
+        }
+        break
+      case 'DC_IN_P':
+        frame[key] = {
+          value: frame[key],
+          description: 'DC input power',
+          units: '1 W'
         }
         break
       default:

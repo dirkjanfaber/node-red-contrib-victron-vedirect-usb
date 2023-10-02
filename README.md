@@ -34,7 +34,7 @@ But if you know what you are doing you can also select a non-tested device.
 # Output
 
 The output depends on the connected product, but is based on the
-[VE.Direct-Protocol-3.23.pdf](https://www.victronenergy.com/upload/documents/VE.Direct-Protocol-3.32.pdf).
+[VE.Direct-Protocol-3.33.pdf](https://www.victronenergy.com/upload/documents/VE.Direct-Protocol-3.33.pdf).
 
 The `msg.payload` holds the used VE.Direct label, the units, description and value. E.g.:
 
