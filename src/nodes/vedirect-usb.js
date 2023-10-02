@@ -51,9 +51,7 @@ module.exports = function (RED) {
     function list (ports) {
       res.setHeader('Content-Type', 'application/json')
       ports.forEach((port) => {
-        if (port.manufacturer === 'VictronEnergy BV') {
-          vedirectports.push(port)
-        }
+        vedirectports.push(port)
       })
       return res.send(vedirectports)
     }

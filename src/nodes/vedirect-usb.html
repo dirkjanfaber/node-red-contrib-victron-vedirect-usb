@@ -4,14 +4,25 @@ var portsUrl = (RED.settings.httpNodeRoot || RED.settings.httpAdminRoot || "").r
 
 function buildEditPanel(node) {
     var buildOption = function buildOption(port) {
-        return $('<option/>').val(port.path).text(port.path+' ('+port.serialNumber+')').data(port);
+        return $('<option/>').val(port.path).text(port.path+' ('+port.manufacturer+': '+port.serialNumber+')').data(port);
     };
 
     var populateSelect = function populateSelect(selector, ports) {
         selector[0].options.length = 0;
+        selector.append('<optgroup label="Tested">')
         ports.forEach(function (port) {
-            selector.append(buildOption(port));
+            console.log(port.manufacturer)
+            if ( port.manufacturer === 'VictronEnergy BV') {
+                selector.append(buildOption(port));
+            }
         });
+        selector.append('</optgroup><optgroup label="Untested">')
+        ports.forEach(function (port) {
+            if ( port.manufacturer !== 'VictronEnergy BV') {
+                selector.append(buildOption(port));
+            }
+        });
+        selector.append('</optgroup>')
         selector.trigger('change');
     };
     $.ajax(portsUrl, {

@@ -24,10 +24,12 @@ Select the port to use from the dropdown. The dropdown is generated on the fly,
 so make sure that the USB part of the cable is connected to the system running
 Node-RED.
 
-Note that there is a filter in place to only show cables that have the manufacturer
+Note that there is a filter in place to first show cables that have the manufacturer
 set to _Victron Energy BV_. This is there, because if the node tries to connect to
 a non-functional port, it might crash Node-RED. This does not happen if it connects
 to a functional port.
+
+But if you know what you are doing you can also select a non-tested device.
 
 # Output
 
