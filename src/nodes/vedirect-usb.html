@@ -2,7 +2,7 @@
 
 var portsUrl = (RED.settings.httpNodeRoot || RED.settings.httpAdminRoot || "").replace(/\/$/, "") + '/victron/vedirect-ports/';
 
-function buildEditPanel(node) {
+function buildEditPanelVVU(node) {
     var buildOption = function buildOption(port) {
         return $('<option/>').val(port.path).text(port.path+' ('+port.manufacturer+': '+port.serialNumber+')').data(port);
     };
@@ -57,7 +57,7 @@ function buildEditPanel(node) {
             return this.name||"VE.Direct USB";
         },
         oneditprepare: function oneditprepare() {
-            buildEditPanel(this);
+            buildEditPanelVVU(this);
         }
     });
 </script>
