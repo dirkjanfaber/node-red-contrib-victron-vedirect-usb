@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pmknowles/node-red-contrib-victron-vedirect-usb.git"
+    "url": "git+https://github.com/dirkjanfaber/node-red-contrib-victron-vedirect-usb.git"
   },
   "keywords": [
     "node-red",
