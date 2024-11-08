@@ -8,22 +8,17 @@ module.exports = function (RED) {
 
     const node = this
     const dataReader = new VEDirect(config.port)
+    let lastData = null
+    let lastUpdateTime = null
+    const dataStaleInterval = 5000 // 5 secs
 
     dataReader.on('data', (data) => {
-      const nodeContext = this.context()
-      const msg = {
-        topic: 'VE.direct'
-      }
+      // Update the last received data and the timestamp
+      lastData = data
+      lastUpdateTime = Date.now()
 
-      if (data.H1) {
-        nodeContext.set('d1', data)
-        msg.payload = Object.assign({}, data, nodeContext.get('d2'))
-      } else {
-        nodeContext.set('d2', data)
-        msg.payload = Object.assign({}, data, nodeContext.get('d1'))
-      }
-      if (msg.payload.PID) {
-        node.status({ fill: 'green', shape: 'dot', text: msg.payload.PID.product || '' })
+      if (data.PID) {
+        node.status({ fill: 'green', shape: 'dot', text: data.PID.product || '' })
       }
     })
 
@@ -33,8 +28,13 @@ module.exports = function (RED) {
     })
 
     node.on('input', function (msg) {
-      const nodeContext = this.context()
-      msg.payload = Object.assign({}, nodeContext.get('d1'), nodeContext.get('d2'))
+      const currentTime = Date.now()
+      if (lastData && (currentTime - lastUpdateTime) < dataStaleInterval) {
+        msg.payload = lastData
+      } else {
+        msg.payload = {}
+        node.status({ fill: 'yellow', shape: 'ring', text: 'data stale or unavailable' })
+      }
       node.send(msg)
     })
 
@@ -46,18 +46,12 @@ module.exports = function (RED) {
   RED.nodes.registerType('victron-vedirect-usb', VEDirectUSB)
 
   RED.httpNode.get('/victron/vedirect-ports', (req, res) => {
-    const vedirectports = []
-
-    function list (ports) {
+    SerialPort.list().then((ports) => {
       res.setHeader('Content-Type', 'application/json')
-      ports.forEach((port) => {
-        vedirectports.push(port)
-      })
-      return res.send(vedirectports)
-    }
-
-    SerialPort.list().then(list, err => {
+      res.send(ports)
+    }, (err) => {
       console.log(err)
+      res.status(500).send(err)
     })
   })
 }
