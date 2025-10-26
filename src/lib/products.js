@@ -1,7 +1,9 @@
 /**
- * Product ID to product name mapping
- * Based on VE.Direct Protocol documentation
+ * VE.Direct Product IDs
+ * Based on VE.Direct Protocol 3.34 (April 2025)
+ * https://www.victronenergy.com/upload/documents/VE.Direct-Protocol-3.34.pdf
  */
+
 const products = {
   '0x203': 'BMV-700',
   '0x204': 'BMV-702',
@@ -70,6 +72,8 @@ const products = {
   '0xA07D': 'BlueSolar MPPT 75/15 rev3',
   '0xA07E': 'SmartSolar MPPT 100/30 12V',
   '0xA07F': 'All-In-1 SmartSolar MPPT 75/15 12V',
+  '0xA080': 'SmartSolar MPPT 250|60 rev3', // Added in v3.34
+  '0xA081': 'SmartSolar MPPT 250|70 rev3', // Added in v3.34
   '0xA102': 'SmartSolar MPPT VE.Can 150/70',
   '0xA103': 'SmartSolar MPPT VE.Can 150/45',
   '0xA104': 'SmartSolar MPPT VE.Can 150/60',
@@ -89,6 +93,7 @@ const products = {
   '0xA114': 'SmartSolar MPPT VE.Can 250/70 rev2',
   '0xA115': 'SmartSolar MPPT VE.Can 250/100 rev2',
   '0xA116': 'SmartSolar MPPT VE.Can 250/85 rev2',
+  '0xA117': 'BlueSolar MPPT VE.Can 150/100 rev2',
   '0xA201': 'Phoenix Inverter 12V 250VA 230V',
   '0xA202': 'Phoenix Inverter 24V 250VA 230V',
   '0xA204': 'Phoenix Inverter 48V 250VA 230V',
@@ -151,16 +156,8 @@ const products = {
   '0xA389': 'SmartShunt 500A/50mV',
   '0xA38A': 'SmartShunt 1000A/50mV',
   '0xA38B': 'SmartShunt 2000A/50mV',
-  '0xA3F0': 'Smart BuckBoost 12V/12V-50A'
+  '0xA3F0': 'Orion XS 12V/12V-50A', // Renamed from "Smart BuckBoost 12V/12V-50A" in v3.34
+  '0xA3F1': 'Orion XS 1400' // Added in v3.34
 }
 
-/**
- * Get product name from product ID
- * @param {string} productId - The product ID (e.g., '0xA389')
- * @returns {string|undefined} The product name or undefined if not found
- */
-function getProductName (productId) {
-  return products[productId]
-}
-
-module.exports = { products, getProductName }
+module.exports = products
