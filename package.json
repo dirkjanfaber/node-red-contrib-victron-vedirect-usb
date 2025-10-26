@@ -4,7 +4,10 @@
   "description": "Access the Victron equipment with a USB VE.Direct cable",
   "main": "index.js",
   "scripts": {
-    "test": "standard --fix"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "standard --fix"
   },
   "repository": {
     "type": "git",
@@ -33,5 +36,20 @@
   "dependencies": {
     "serialport": "~10.5.0",
     "@serialport/parser-delimiter": "^10.5.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "standard": "^17.1.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageDirectory": "./coverage",
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/nodes/**/*.js"
+    ],
+    "testMatch": [
+      "**/test/**/*.test.js"
+    ]
   }
 }

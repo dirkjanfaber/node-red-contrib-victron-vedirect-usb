@@ -1,65 +1,76 @@
 <script type="text/javascript">
+(function() {
+  'use strict';
 
-var portsUrl = (RED.settings.httpNodeRoot || RED.settings.httpAdminRoot || "").replace(/\/$/, "") + '/victron/vedirect-ports/';
+  var portsUrl = (RED.settings.httpNodeRoot || RED.settings.httpAdminRoot || "").replace(/\/$/, "") + '/victron/vedirect-ports/';
 
-function buildEditPanelVVU(node) {
-    var buildOption = function buildOption(port) {
-        return $('<option/>').val(port.path).text(port.path+' ('+port.manufacturer+': '+port.serialNumber+')').data(port);
-    };
+  // Namespace all functions under VictronVEDirect
+  var VictronVEDirect = {
+    buildOption: function(port) {
+      return $('<option/>').val(port.path).text(port.path+' ('+port.manufacturer+': '+port.serialNumber+')').data(port);
+    },
 
-    var populateSelect = function populateSelect(selector, ports) {
-        selector[0].options.length = 0;
-        selector.append('<optgroup label="Tested">')
-        ports.forEach(function (port) {
-            console.log(port.manufacturer)
-            if ( port.manufacturer === 'VictronEnergy BV') {
-                selector.append(buildOption(port));
-            }
-        });
-        selector.append('</optgroup><optgroup label="Untested">')
-        ports.forEach(function (port) {
-            if ( port.manufacturer !== 'VictronEnergy BV') {
-                selector.append(buildOption(port));
-            }
-        });
-        selector.append('</optgroup>')
-        selector.trigger('change');
-    };
-    $.ajax(portsUrl, {
-            beforeSend: function(jqXHR) {
-                var auth_tokens = RED.settings.get("auth-tokens");
-                if (auth_tokens) {
-                    jqXHR.setRequestHeader("Authorization","Bearer "+auth_tokens.access_token);
-                }
-            }
-        })
-        .done(data => {
-            if (data.length !== 0) {
-                populateSelect($('#node-input-port'), data);
-            }
-            if (node.port) { $('#node-input-port').val(node.port) }
-
-        }).fail(function () {
-            return showStatusMessage("Unable to access the service endpoint.");
-        });
-}
-    RED.nodes.registerType('victron-vedirect-usb',{
-        category: 'Victron Energy',
-        paletteLabel: 'VE.Direct USB',
-        color: '#f7ab3e',
-        defaults: {
-            name: {value: ""},
-            port: {value: "/dev/ttyUSB0"}        },
-        inputs: 1,
-        outputs: 1,
-        icon: "victronenergy.svg",
-        label: function() {
-            return this.name||"VE.Direct USB";
-        },
-        oneditprepare: function oneditprepare() {
-            buildEditPanelVVU(this);
+    populateSelect: function(selector, ports) {
+      selector[0].options.length = 0;
+      selector.append('<optgroup label="Tested">');
+      ports.forEach(function(port) {
+        console.log(port.manufacturer);
+        if (port.manufacturer === 'VictronEnergy BV') {
+          selector.append(VictronVEDirect.buildOption(port));
         }
-    });
+      });
+      selector.append('</optgroup><optgroup label="Untested">');
+      ports.forEach(function(port) {
+        if (port.manufacturer !== 'VictronEnergy BV') {
+          selector.append(VictronVEDirect.buildOption(port));
+        }
+      });
+      selector.append('</optgroup>');
+      selector.trigger('change');
+    },
+
+    buildEditPanel: function(node) {
+      $.ajax(portsUrl, {
+        beforeSend: function(jqXHR) {
+          var auth_tokens = RED.settings.get("auth-tokens");
+          if (auth_tokens) {
+            jqXHR.setRequestHeader("Authorization","Bearer "+auth_tokens.access_token);
+          }
+        }
+      })
+      .done(function(data) {
+        if (data.length !== 0) {
+          VictronVEDirect.populateSelect($('#node-input-port'), data);
+        }
+        if (node.port) {
+          $('#node-input-port').val(node.port);
+        }
+      })
+      .fail(function() {
+        RED.notify("Unable to access the service endpoint.", "error");
+      });
+    }
+  };
+
+  RED.nodes.registerType('victron-vedirect-usb', {
+    category: 'Victron Energy',
+    paletteLabel: 'VE.Direct USB',
+    color: '#f7ab3e',
+    defaults: {
+      name: {value: ""},
+      port: {value: "/dev/ttyUSB0"}
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "victronenergy.svg",
+    label: function() {
+      return this.name || "VE.Direct USB";
+    },
+    oneditprepare: function() {
+      VictronVEDirect.buildEditPanel(this);
+    }
+  });
+})();
 </script>
 
 <script type="text/html" data-template-name="victron-vedirect-usb">
@@ -71,29 +82,26 @@ function buildEditPanelVVU(node) {
         <label for="node-input-port"><i class="fa fa-tag"></i> Port</label>
         <select id="node-input-port" required>
         </select>
-        </div>
+    </div>
 </script>
 
-<script type="text/html" data-help-name="victron-vedirect-usb">
-  <p>A node for VE.Direct USB communication with Victron devices.</p>
+<script type="text/markdown" data-help-name="victron-vedirect-usb">
+A node for VE.Direct USB communication with Victron devices.
 
-  <h3>Configuration</h3>
+### Configuration
 
-  <p>Only needed configuration is to select the port where the ttyUSB dongle
-    is connected to. Make sure that you have rights for reading the dongle
-    (this might need you to be in group <tt>dialup</tt>).
-  </p>
+Only needed configuration is to select the port where the ttyUSB dongle
+is connected to. Make sure that you have rights for reading the dongle
+(this might need you to be in group `dialup`).
 
-  <h3>Input</h3>
+### Input
 
-  <p>On each input, the read output gets send out. So use an repeating
-    inject node to get output every x seconds.
-  </p>
+On each input, the read output gets send out. So use an repeating
+inject node to get output every x seconds.
 
-  <h3>Status</h3>
+### Status
 
-  <p>The status shows a green dot with the connected product when when the
-  node is functioning properly.
-  It will show a red dot with an error message when something is wrong.</p>
-
+The status shows a green dot with the connected product when the
+node is functioning properly. It will show a red dot with an error
+message when something is wrong.
 </script>

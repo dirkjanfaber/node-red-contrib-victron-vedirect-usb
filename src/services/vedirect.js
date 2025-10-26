@@ -1,6 +1,6 @@
 const { SerialPort } = require('serialport')
 const { DelimiterParser } = require('@serialport/parser-delimiter')
-const VEDirectParser = require('../services/parser')
+const VEDirectParser = require('./parser')
 const { EventEmitter } = require('events')
 
 class VEDirect extends EventEmitter {
@@ -14,7 +14,7 @@ class VEDirect extends EventEmitter {
       parity: 'none'
     }, false)
 
-    this.serial.on('error', function (err) {
+    this.serial.on('error', (err) => {
       console.log(err)
     })
 
