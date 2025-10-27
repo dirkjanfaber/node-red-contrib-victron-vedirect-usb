@@ -4,7 +4,10 @@ module.exports = {
     userDir: process.env.HOME + '/.node-red',
     functionGlobalContext: {},
     debugMaxLength: 1000,
-    nodesDir: [process.env.HOME + '/git/node-red-contrib-victron-vedirect-usb/src/nodes'],
+    nodesDir: [process.env.HOME + '/git/node-red-contrib-victron-vedirect-usb/src/nodes',
+        process.env.HOME + '/git/node-red-contrib-victron/src/nodes',
+        process.env.HOME + '/git/victron-vrm-api/src/nodes'
+    ],
     verbose: true,
     logging: {
         console: {

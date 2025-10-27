@@ -12,7 +12,7 @@
         "outputCapture": "std",
         "env": {
           "NO_UPDATE_NOTIFIER": "1",
-          "DEBUG": "node-red-contrib-victron-vedirect-usb"
+          "DEBUG": "vedirect:*"
         }
       },
       {
