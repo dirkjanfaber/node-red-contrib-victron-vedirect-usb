@@ -105,7 +105,7 @@ describe('field-definitions', () => {
     test('should be case-sensitive', () => {
       const upperDef = getFieldDefinition('V')
       const lowerDef = getFieldDefinition('v')
-      
+
       expect(upperDef.description).toBe('Main or channel 1 (battery) voltage')
       expect(lowerDef.description).toBe('Non implemented key')
     })

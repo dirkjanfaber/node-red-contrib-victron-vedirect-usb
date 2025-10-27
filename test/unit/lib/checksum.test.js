@@ -24,7 +24,7 @@ describe('checksum', () => {
     const currentChecksum = checksum(block)
     const checksumByte = (256 - currentChecksum) & 255
     const fullBlock = Buffer.concat([block, Buffer.from([checksumByte])])
-    
+
     expect(checksum(fullBlock)).toBe(0)
   })
 

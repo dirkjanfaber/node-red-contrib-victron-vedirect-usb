@@ -3,7 +3,7 @@ const { Writable } = require('stream')
 
 // Helper function to calculate the checksum BYTE value (not ASCII text!)
 // The checksum is a single byte that makes the sum of all bytes in the frame equal to 0 mod 256
-function calculateChecksumByte(lines) {
+function calculateChecksumByte (lines) {
   let buffer = Buffer.alloc(0)
 
   // Build buffer the same way the parser does
@@ -32,13 +32,13 @@ function calculateChecksumByte(lines) {
 
 // Helper to create a properly checksummed frame
 // Returns array of Buffer chunks INCLUDING the checksum as a SINGLE BYTE
-function createFrameWithChecksum(lines) {
+function createFrameWithChecksum (lines) {
   const checksumByte = calculateChecksumByte(lines)
 
   // Create the checksum line: "Checksum\t" + single byte
   const checksumLine = Buffer.concat([
     Buffer.from('Checksum\t'),
-    Buffer.from([checksumByte])  // Single byte, not ASCII text!
+    Buffer.from([checksumByte]) // Single byte, not ASCII text!
   ])
 
   return [
