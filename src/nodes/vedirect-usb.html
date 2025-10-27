@@ -1,7 +1,5 @@
 <script type="text/javascript">
 
-var portsUrl = (RED.settings.httpNodeRoot || RED.settings.httpAdminRoot || "").replace(/\/$/, "") + '/victron/vedirect-ports/';
-
 function buildEditPanelVVU(node) {
     var buildOption = function buildOption(port) {
         return $('<option/>').val(port.path).text(port.path+' ('+port.manufacturer+': '+port.serialNumber+')').data(port);
@@ -25,14 +23,7 @@ function buildEditPanelVVU(node) {
         selector.append('</optgroup>')
         selector.trigger('change');
     };
-    $.ajax(portsUrl, {
-            beforeSend: function(jqXHR) {
-                var auth_tokens = RED.settings.get("auth-tokens");
-                if (auth_tokens) {
-                    jqXHR.setRequestHeader("Authorization","Bearer "+auth_tokens.access_token);
-                }
-            }
-        })
+    $.getJSON('victron/vedirect-ports')
         .done(data => {
             if (data.length !== 0) {
                 populateSelect($('#node-input-port'), data);
