@@ -74,11 +74,10 @@ module.exports = function (RED) {
 
   RED.httpAdmin.get('/victron/vedirect-ports', (_req, res) => {
     SerialPort.list().then((ports) => {
-      res.setHeader('Content-Type', 'application/json')
-      res.send(ports)
+      res.json(ports)
     }, (err) => {
-      console.log(err)
-      res.status(500).send(err)
+      RED.log.error(err)
+      res.status(500).json({ error: err.message })
     })
   })
 }

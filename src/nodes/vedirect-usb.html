@@ -2,8 +2,6 @@
 (function() {
   'use strict';
 
-  var portsUrl = (RED.settings.httpAdminRoot || RED.settings.httpNodeRoot || "").replace(/\/$/, "") + '/victron/vedirect-ports/';
-
   var VictronVEDirect = {
     buildOption: function(port) {
       return $('<option/>').val(port.path).text(port.path+' ('+port.manufacturer+': '+port.serialNumber+')').data(port);
