@@ -8,13 +8,13 @@ module.exports = function (RED) {
 
     const node = this
     const dataReader = new VEDirect(config.port)
-    let lastData = null
+    let mergedData = {}
     let lastUpdateTime = null
     const dataStaleInterval = 5000 // 5 secs
 
     dataReader.on('data', (data) => {
-      // Update the last received data and the timestamp
-      lastData = data
+      // Merge in the current received data and the timestamp
+      Object.assign(mergedData, data)
       lastUpdateTime = Date.now()
 
       if (data.PID) {
@@ -29,12 +29,12 @@ module.exports = function (RED) {
 
     node.on('input', function (msg) {
       const currentTime = Date.now()
-      if (lastData && (currentTime - lastUpdateTime) < dataStaleInterval) {
-        msg.payload = lastData
-      } else {
-        msg.payload = {}
+      if ((currentTime - lastUpdateTime) > dataStaleInterval) {
+        // Reset mergedData if data is stale
+        mergedData = {}
         node.status({ fill: 'yellow', shape: 'ring', text: 'data stale or unavailable' })
       }
+      msg.payload = mergedData
       node.send(msg)
     })
 
