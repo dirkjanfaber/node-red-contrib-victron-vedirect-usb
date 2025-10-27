@@ -11,18 +11,19 @@ module.exports = function (RED) {
     debug('Initializing VEDirectUSB node on port %s', config.port)
 
     const dataReader = new VEDirect(config.port)
-    let lastData = null
+    let accumulatedData = {} // Accumulated data across all frames
     let productName = null
     let dataEventCount = 0
 
     dataReader.on('data', (data) => {
       dataEventCount++
       debug('Received data event #%d', dataEventCount)
+      debug('Frame has %d fields', Object.keys(data).length)
 
-      // Update the last received data
-      lastData = data
+      // Merge new data into accumulated data (overwrites existing fields)
+      accumulatedData = { ...accumulatedData, ...data }
 
-      debug('Data has %d fields', Object.keys(data).length)
+      debug('Accumulated data now has %d total fields', Object.keys(accumulatedData).length)
 
       // Store and display product name when we first see it
       if (data.PID && data.PID.product) {
@@ -31,7 +32,6 @@ module.exports = function (RED) {
         node.status({ fill: 'green', shape: 'dot', text: productName })
       } else if (productName) {
         // Keep showing the product name even if PID isn't in this frame
-        debug('Keeping previous product name: %s', productName)
         node.status({ fill: 'green', shape: 'dot', text: productName })
       } else {
         // No product name yet
@@ -52,10 +52,10 @@ module.exports = function (RED) {
       inputCount++
       debug('Input triggered #%d', inputCount)
 
-      // Simply output the last received data, no staleness check
-      if (lastData) {
-        debug('Sending data with %d fields', Object.keys(lastData).length)
-        msg.payload = lastData
+      // Output the accumulated data containing all fields seen so far
+      if (Object.keys(accumulatedData).length > 0) {
+        debug('Sending accumulated data with %d fields', Object.keys(accumulatedData).length)
+        msg.payload = accumulatedData
       } else {
         debug('No data available yet')
         msg.payload = {}
