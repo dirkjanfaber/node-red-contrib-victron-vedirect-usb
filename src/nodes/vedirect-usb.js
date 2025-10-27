@@ -1,5 +1,5 @@
+'use strict'
 module.exports = function (RED) {
-  'use strict'
   const VEDirect = require('../services/vedirect')
   const { SerialPort } = require('serialport')
 

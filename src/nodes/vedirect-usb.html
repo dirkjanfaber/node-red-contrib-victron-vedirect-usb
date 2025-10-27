@@ -9,20 +9,20 @@ function buildEditPanelVVU(node) {
 
     var populateSelect = function populateSelect(selector, ports) {
         selector[0].options.length = 0;
-        selector.append('<optgroup label="Tested">')
+        selector.append('<optgroup label="Tested">');
         ports.forEach(function (port) {
             console.log(port.manufacturer)
             if ( port.manufacturer === 'VictronEnergy BV') {
                 selector.append(buildOption(port));
             }
         });
-        selector.append('</optgroup><optgroup label="Untested">')
+        selector.append('</optgroup><optgroup label="Untested">');
         ports.forEach(function (port) {
             if ( port.manufacturer !== 'VictronEnergy BV') {
                 selector.append(buildOption(port));
             }
         });
-        selector.append('</optgroup>')
+        selector.append('</optgroup>');
         selector.trigger('change');
     };
     $.ajax(portsUrl, {
@@ -42,14 +42,16 @@ function buildEditPanelVVU(node) {
         }).fail(function () {
             return showStatusMessage("Unable to access the service endpoint.");
         });
-}
+    }
+
     RED.nodes.registerType('victron-vedirect-usb',{
         category: 'Victron Energy',
         paletteLabel: 'VE.Direct USB',
         color: '#f7ab3e',
         defaults: {
             name: {value: ""},
-            port: {value: "/dev/ttyUSB0"}        },
+            port: {value: "/dev/ttyUSB0"}
+        },
         inputs: 1,
         outputs: 1,
         icon: "victronenergy.svg",
