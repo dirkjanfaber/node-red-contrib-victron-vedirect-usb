@@ -74,6 +74,8 @@ const products = {
   '0xA07D': 'BlueSolar MPPT 75/15 rev3',
   '0xA07E': 'SmartSolar MPPT 100/30 12V',
   '0xA07F': 'All-In-1 SmartSolar MPPT 75/15 12V',
+  '0xA080': 'SmartSolar MPPT 250/60 rev3',
+  '0xA081': 'SmartSolar MPPT 250/70 rev3',
   '0xA102': 'SmartSolar MPPT VE.Can 150/70',
   '0xA103': 'SmartSolar MPPT VE.Can 150/45',
   '0xA104': 'SmartSolar MPPT VE.Can 150/60',
@@ -155,7 +157,8 @@ const products = {
   '0xA389': 'SmartShunt 500A/50mV',
   '0xA38A': 'SmartShunt 1000A/50mV',
   '0xA38B': 'SmartShunt 2000A/50mV',
-  '0xA3F0': 'Smart BuckBoost 12V/12V-50A'
+  '0xA3F0': 'Orion XS 12V/12V-50A',
+  '0xA3F1': 'Orion XS 1400'
 }
 
 const parseValues = (frame) => {
