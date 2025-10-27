@@ -160,4 +160,13 @@ const products = {
   '0xA3F1': 'Orion XS 1400' // Added in v3.34
 }
 
-module.exports = products
+/**
+ * Get the product name for a given product ID
+ * @param {string} productId - The product ID (e.g., "0xA389")
+ * @returns {string|undefined} The product name, or undefined if not found
+ */
+function getProductName (productId) {
+  return products[productId]
+}
+
+module.exports = { products, getProductName }
