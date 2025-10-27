@@ -72,7 +72,7 @@ module.exports = function (RED) {
 
   RED.nodes.registerType('victron-vedirect-usb', VEDirectUSB)
 
-  RED.httpNode.get('/victron/vedirect-ports', (req, res) => {
+  RED.httpAdmin.get('/victron/vedirect-ports', (req, res) => {
     SerialPort.list().then((ports) => {
       res.setHeader('Content-Type', 'application/json')
       res.send(ports)
