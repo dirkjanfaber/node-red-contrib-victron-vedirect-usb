@@ -18,6 +18,11 @@
     "victron",
     "vedirect"
   ],
+  "files": [
+     "examples",
+     "src",
+     "LICENSE"
+  ],
   "node-red": {
     "nodes": {
       "victron-vedirect-usb": "src/nodes/vedirect-usb.js"
