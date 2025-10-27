@@ -157,7 +157,8 @@ const products = {
   '0xA38A': 'SmartShunt 1000A/50mV',
   '0xA38B': 'SmartShunt 2000A/50mV',
   '0xA3F0': 'Orion XS 12V/12V-50A', // Renamed from "Smart BuckBoost 12V/12V-50A" in v3.34
-  '0xA3F1': 'Orion XS 1400' // Added in v3.34
+  '0xA3F1': 'Orion XS 1400', // Added in v3.34
+  '0xA402': 'RS Inverter Smart 48|6000'
 }
 
 /**
