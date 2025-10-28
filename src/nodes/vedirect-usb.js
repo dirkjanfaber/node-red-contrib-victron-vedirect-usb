@@ -2,6 +2,7 @@ module.exports = function (RED) {
   'use strict'
   const VEDirect = require('../services/vedirect')
   const { SerialPort } = require('serialport')
+  const { parseTimeout, isStale, getStatusDisplay } = require('../lib/stale-detector')
   const debug = require('debug')('vedirect:node')
 
   function VEDirectUSB (config) {
@@ -14,10 +15,38 @@ module.exports = function (RED) {
     let accumulatedData = {} // Accumulated data across all frames
     let productName = null
     let dataEventCount = 0
+    let lastDataTime = null
+    let staleCheckInterval = null
+
+    // Parse timeout configuration
+    const timeoutMs = parseTimeout(config.timeout)
+
+    debug('Stale detection timeout: %s ms', timeoutMs)
+
+    // Function to update status based on current state
+    function updateStatus () {
+      const stale = isStale(lastDataTime, timeoutMs)
+      const status = getStatusDisplay(stale, productName)
+
+      if (stale) {
+        debug('Data is stale')
+      }
+
+      node.status(status)
+    }
+
+    // Set up interval to check for stale data
+    if (timeoutMs) {
+      debug('Starting stale data check interval')
+      staleCheckInterval = setInterval(() => {
+        updateStatus()
+      }, 1000) // Check every second
+    }
 
     dataReader.on('data', (data) => {
       dataEventCount++
-      debug('Received data event #%d', dataEventCount)
+      lastDataTime = Date.now()
+      debug('Received data event #%d at %d', dataEventCount, lastDataTime)
       debug('Frame has %d fields', Object.keys(data).length)
 
       // Merge new data into accumulated data (overwrites existing fields)
@@ -29,15 +58,9 @@ module.exports = function (RED) {
       if (data.PID && data.PID.product) {
         productName = data.PID.product
         debug('Product identified: %s', productName)
-        node.status({ fill: 'green', shape: 'dot', text: productName })
-      } else if (productName) {
-        // Keep showing the product name even if PID isn't in this frame
-        node.status({ fill: 'green', shape: 'dot', text: productName })
-      } else {
-        // No product name yet
-        debug('No product name yet, showing generic status')
-        node.status({ fill: 'green', shape: 'dot', text: 'connected' })
       }
+
+      updateStatus()
     })
 
     dataReader.on('error', (error) => {
@@ -52,6 +75,13 @@ module.exports = function (RED) {
       inputCount++
       debug('Input triggered #%d', inputCount)
 
+      // Check if data is stale
+      if (isStale(lastDataTime, timeoutMs)) {
+        debug('Data is stale, not sending output')
+        updateStatus()
+        return // Don't send anything
+      }
+
       // Output the accumulated data containing all fields seen so far
       if (Object.keys(accumulatedData).length > 0) {
         debug('Sending accumulated data with %d fields', Object.keys(accumulatedData).length)
@@ -65,7 +95,10 @@ module.exports = function (RED) {
     })
 
     node.on('close', function () {
-      debug('Closing node, closing serial port')
+      debug('Closing node, clearing interval and closing serial port')
+      if (staleCheckInterval) {
+        clearInterval(staleCheckInterval)
+      }
       dataReader.serial.close()
     })
   }

@@ -48,7 +48,10 @@
     color: '#f7ab3e',
     defaults: {
       name: {value: ""},
-      port: {value: "/dev/ttyUSB0"}
+      port: {value: "/dev/ttyUSB0"},
+      timeout: {value: 10, validate: function(v) {
+        return v === "" || v === null || v === undefined || (!isNaN(parseFloat(v)) && parseFloat(v) > 0);
+      }}
     },
     inputs: 1,
     outputs: 1,
@@ -73,6 +76,11 @@
         <select id="node-input-port" required>
         </select>
     </div>
+    <div class="form-row">
+        <label for="node-input-timeout"><i class="fa fa-clock-o"></i> Timeout</label>
+        <input type="number" id="node-input-timeout" placeholder="10" min="0" step="1" style="width: 100px;">
+        <span> seconds (leave empty to disable stale detection)</span>
+    </div>
 </script>
 
 <script type="text/markdown" data-help-name="victron-vedirect-usb">
@@ -84,6 +92,10 @@ Only needed configuration is to select the port where the ttyUSB dongle
 is connected to. Make sure that you have rights for reading the dongle
 (this might need you to be in group `dialup`).
 
+**Timeout**: Configure stale data detection timeout in seconds (default: 10).
+If no data is received within this time, the node will stop outputting data
+and show a warning status. Leave empty to disable stale detection.
+
 ### Input
 
 On each input, the read output gets send out. So use an repeating
@@ -92,6 +104,7 @@ inject node to get output every x seconds.
 ### Status
 
 The status shows a green dot with the connected product when the
-node is functioning properly. It will show a red dot with an error
-message when something is wrong.
+node is functioning properly. It will show a yellow dot with "stale data"
+when no fresh data has been received within the timeout period. It will
+show a red dot with an error message when something is wrong.
 </script>
