@@ -33,6 +33,12 @@ to a functional port.
 
 But if you know what you are doing you can also select a non-tested device.
 
+### Timeout
+
+Configure the stale data detection timeout in seconds (default: 10 seconds).
+If no data is received within this time, the node will stop outputting data
+and show a warning status. Leave the field empty to disable stale detection.
+
 ## Output
 
 The output depends on the connected product, but is based on the
@@ -53,7 +59,9 @@ The above example is abbreviated. It typically consists of more labels.
 ## Status
 
 The node shows a green dot with the connected product when functional. It will
-show a red dot with the error message when something went wrong.
+show a yellow dot with "stale data" when no data has been received within the
+configured timeout period. It will show a red dot with the error message when
+something went wrong.
 
 ## Development
 
@@ -65,7 +73,8 @@ src/
 │   ├── checksum.js
 │   ├── products.js
 │   ├── field-definitions.js
-│   └── value-parser.js
+│   ├── value-parser.js
+│   └── stale-detector.js
 ├── services/         # Business logic and stream handlers
 │   ├── parser.js
 │   └── vedirect.js
