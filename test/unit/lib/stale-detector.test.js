@@ -1,4 +1,4 @@
-const { parseTimeout, isStale, getStatusDisplay } = require('../../../src/lib/stale-detector')
+const { parseTimeout, isStale } = require('../../../src/lib/stale-detector')
 
 describe('stale-detector', () => {
   describe('parseTimeout', () => {
@@ -92,73 +92,6 @@ describe('stale-detector', () => {
     test('should use Date.now() when currentTime not provided', () => {
       const lastDataTime = Date.now() - 5000
       expect(isStale(lastDataTime, TEN_SECONDS)).toBe(false)
-    })
-  })
-
-  describe('getStatusDisplay', () => {
-    test('should return stale status when data is stale', () => {
-      expect(getStatusDisplay(true, 'SmartShunt 500A/50mV')).toEqual({
-        fill: 'yellow',
-        shape: 'ring',
-        text: 'stale data'
-      })
-    })
-
-    test('should return stale status when data is stale and no product', () => {
-      expect(getStatusDisplay(true, null)).toEqual({
-        fill: 'yellow',
-        shape: 'ring',
-        text: 'stale data'
-      })
-    })
-
-    test('should return product name when data is fresh and product known', () => {
-      expect(getStatusDisplay(false, 'SmartShunt 500A/50mV')).toEqual({
-        fill: 'green',
-        shape: 'dot',
-        text: 'SmartShunt 500A/50mV'
-      })
-    })
-
-    test('should return connected status when data is fresh but no product', () => {
-      expect(getStatusDisplay(false, null)).toEqual({
-        fill: 'green',
-        shape: 'dot',
-        text: 'connected'
-      })
-    })
-
-    test('should return connected status when data is fresh and product is empty string', () => {
-      expect(getStatusDisplay(false, '')).toEqual({
-        fill: 'green',
-        shape: 'dot',
-        text: 'connected'
-      })
-    })
-
-    test('should handle various product names', () => {
-      const products = [
-        'BMV-700',
-        'SmartSolar MPPT 250|100',
-        'Phoenix Inverter 12V 250VA 230V'
-      ]
-
-      products.forEach(product => {
-        expect(getStatusDisplay(false, product)).toEqual({
-          fill: 'green',
-          shape: 'dot',
-          text: product
-        })
-      })
-    })
-
-    test('should prioritize stale status over product name', () => {
-      // Even with a product name, stale data should show stale status
-      expect(getStatusDisplay(true, 'BMV-700')).toEqual({
-        fill: 'yellow',
-        shape: 'ring',
-        text: 'stale data'
-      })
     })
   })
 })

@@ -1,5 +1,8 @@
 /**
  * Sample VE.Direct data frames for testing
+ *
+ * Captured from real devices, so each frame keeps the Checksum byte the device
+ * sent. toWireFrame recomputes it rather than trusting the capture.
  */
 
 // SmartShunt sample data
@@ -125,7 +128,39 @@ const unknownProductFrame = {
   Checksum: 'b'
 }
 
+// The VE.Direct checksum invariant: the parser rebuilds a frame as CRLF + line
+// for every line it receives, and the byte after "Checksum\t" is whatever makes
+// that whole buffer sum to 0 mod 256.
+function checksumByte (lines) {
+  const buffer = Buffer.concat(
+    lines.concat('Checksum\t').map((line) => Buffer.concat([
+      Buffer.from([0x0d, 0x0a]),
+      Buffer.from(line)
+    ]))
+  )
+
+  const sum = buffer.reduce((total, byte) => (total + byte) & 255, 0)
+
+  return (256 - sum) & 255
+}
+
+// Serialize a field object into the bytes a VE.Direct device puts on the wire:
+// CRLF-delimited "key\tvalue" lines ending in a Checksum line.
+function toWireFrame (fields) {
+  const lines = Object.keys(fields)
+    .filter((key) => key !== 'Checksum')
+    .map((key) => `${key}\t${fields[key]}`)
+
+  return Buffer.concat([
+    Buffer.from(lines.concat('Checksum\t').join('\r\n')),
+    Buffer.from([checksumByte(lines)]),
+    Buffer.from([0x0d, 0x0a])
+  ])
+}
+
 module.exports = {
+  checksumByte,
+  toWireFrame,
   smartShuntFrame,
   mpptFrame,
   bmvFrame,

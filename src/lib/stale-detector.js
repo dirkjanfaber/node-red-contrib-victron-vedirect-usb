@@ -43,26 +43,7 @@ function isStale (lastDataTime, timeoutMs, currentTime = Date.now()) {
   return (currentTime - lastDataTime) > timeoutMs
 }
 
-/**
- * Determine the appropriate status display based on stale state and product info
- * @param {boolean} isDataStale - Whether the data is currently stale
- * @param {string|null} productName - The product name, if known
- * @returns {Object} Status object with fill, shape, and text properties
- */
-function getStatusDisplay (isDataStale, productName) {
-  if (isDataStale) {
-    return { fill: 'yellow', shape: 'ring', text: 'stale data' }
-  }
-
-  if (productName) {
-    return { fill: 'green', shape: 'dot', text: productName }
-  }
-
-  return { fill: 'green', shape: 'dot', text: 'connected' }
-}
-
 module.exports = {
   parseTimeout,
-  isStale,
-  getStatusDisplay
+  isStale
 }

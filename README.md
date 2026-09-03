@@ -56,12 +56,50 @@ I: {"value":0,"description":"Main or channel 1 battery current","units":"mA"}
 
 The above example is abbreviated. It typically consists of more labels.
 
+## Reconnecting
+
+The node supervises its serial connection and reopens it by itself, so a
+disconnected or silent cable no longer needs a Node-RED restart to recover. It
+reconnects when:
+
+- the device is unplugged or the driver resets the port
+- the port cannot be opened, or opening fails with an error
+- the port stays open but sends nothing (see the window below)
+
+Retries back off exponentially from about 1 second up to 30 seconds, and the port is
+re-resolved on every attempt, so a cable that comes back on a different
+`/dev/ttyUSB*` name is still found. The backoff resets as soon as a frame
+arrives. An ongoing outage is logged once, then again on a widening interval
+from one minute out to one hour, so a week of flapping stays readable. Each
+line names the port, the attempt count and how long the outage has lasted, and
+a recovery line records the return. That interval only resets once the link has
+delivered data steadily for a minute, so a cable that flaps every few seconds
+stays under one outage rather than opening a fresh one each cycle.
+
+Fields collected before a disconnect are kept, so a first frame that carries
+only part of the record does not lose the rest. They are held back while the
+data is stale, but with stale detection disabled an input can still emit fields
+from before the outage. If a `/dev/ttyUSB*` path might end up pointing at a
+different device, select the port so the serial number is stored with it.
+
+Supervision does not depend on the timeout setting, and retries never stop. The
+node treats a port as dead after 60 seconds of silence, or after the configured
+timeout if that is longer — the timeout only ever lengthens the window, since
+"is this reading fresh enough to send" and "is this link dead" are different
+questions.
+
 ## Status
 
-The node shows a green dot with the connected product when functional. It will
-show a yellow dot with "stale data" when no data has been received within the
-configured timeout period. It will show a red dot with the error message when
-something went wrong.
+| Status | Meaning |
+| --- | --- |
+| Blue ring, "connecting" | Opening the serial port |
+| Green dot, product name | Connected and receiving data |
+| Yellow ring, "waiting for data" | Connected, no frame received yet |
+| Yellow ring, "stale data" | Connected, but no data within the timeout |
+| Yellow ring, "reconnecting (disconnected)" | The cable or port went away; waiting to retry |
+| Yellow ring, "reconnecting (no data)" | The port is open but the device went silent; waiting to retry |
+| Red dot, `retrying: <message>` | The port could not be opened or reported an error |
+| Grey ring, "unknown" | Should not happen; the connection state was not recognised |
 
 ## Development
 
@@ -74,7 +112,12 @@ src/
 │   ├── products.js
 │   ├── field-definitions.js
 │   ├── value-parser.js
-│   └── stale-detector.js
+│   ├── connection-status.js
+│   ├── duration.js
+│   ├── port-resolver.js
+│   ├── reconnect-policy.js
+│   ├── stale-detector.js
+│   └── warn-throttle.js
 ├── services/         # Business logic and stream handlers
 │   ├── parser.js
 │   └── vedirect.js
@@ -84,8 +127,8 @@ src/
 test/
 ├── unit/            # Unit tests
 │   ├── lib/
-│   ├── services/
-│   └── utils/
+│   ├── nodes/
+│   └── services/
 └── fixtures/        # Test data and fixtures
 ```
 
@@ -111,7 +154,8 @@ Test coverage reports are generated in the `coverage/` directory after running `
 Target coverage goals:
 - **lib/**: 100% (pure functions should be fully testable)
 - **services/**: 80%+ (core business logic)
-- **nodes/**: Not covered by unit tests (requires Node-RED runtime)
+- **nodes/**: The supervisor is covered by driving the node against a stubbed
+  Node-RED runtime and a stubbed serial connection (`test/unit/nodes/`)
 
 ## License
 

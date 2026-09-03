@@ -39,6 +39,7 @@
   },
   "homepage": "https://github.com/dirkjanfaber/node-red-contrib-victron-vedirect-usb#readme",
   "dependencies": {
+    "debug": "^4.3.4",
     "serialport": "~10.5.0",
     "@serialport/parser-delimiter": "^10.5.0"
   },
@@ -55,8 +56,7 @@
     "testEnvironment": "node",
     "coverageDirectory": "./coverage",
     "collectCoverageFrom": [
-      "src/**/*.js",
-      "!src/nodes/**/*.js"
+      "src/**/*.js"
     ],
     "testMatch": [
       "**/test/**/*.test.js"

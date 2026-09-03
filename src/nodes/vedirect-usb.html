@@ -144,10 +144,37 @@ and show a warning status. Leave empty to disable stale detection.
 On each input, the read output gets send out. So use an repeating
 inject node to get output every x seconds.
 
+### Reconnecting
+
+The node reopens the serial port by itself when the device is unplugged, when
+the port cannot be opened, or when the port stays open but stops sending data.
+Retries back off from about 1 second up to 30 seconds, and the port is re-resolved on
+every attempt so a cable that comes back on a different `/dev/ttyUSB*` name is
+still found.
+
+This does not depend on the timeout setting, and retries never stop. The node
+treats a port as dead after 60 seconds of silence, or after the configured
+timeout if that is longer — the timeout only ever lengthens the window.
+
+An ongoing outage is logged once, then again on a widening interval from one
+minute out to one hour. Each line names the port, the attempt count and the
+outage duration, and a recovery line records the return. That interval only
+resets once the link has delivered data steadily for a minute, so a cable that
+flaps every few seconds stays under one outage rather than opening a fresh one
+each cycle.
+
+Fields collected before a disconnect are kept, so a first frame carrying only
+part of the record does not lose the rest. With stale detection disabled an
+input can still emit fields from before the outage.
+
 ### Status
 
-The status shows a green dot with the connected product when the
-node is functioning properly. It will show a yellow dot with "stale data"
-when no fresh data has been received within the timeout period. It will
-show a red dot with an error message when something is wrong.
+- Blue ring, "connecting": opening the serial port.
+- Green dot with the product name: connected and receiving data.
+- Yellow ring, "waiting for data": connected, no frame received yet.
+- Yellow ring, "stale data": connected, but no fresh data within the timeout.
+- Yellow ring, "reconnecting (disconnected)": the cable or port went away.
+- Yellow ring, "reconnecting (no data)": the port is open but the device went silent.
+- Red dot, `retrying: <message>`: the port could not be opened or reported an error.
+- Grey ring, "unknown": should not happen; the connection state was not recognised.
 </script>

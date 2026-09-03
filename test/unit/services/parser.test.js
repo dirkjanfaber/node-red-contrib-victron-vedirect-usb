@@ -1,44 +1,17 @@
 const VEDirectParser = require('../../../src/services/parser')
 const { Writable } = require('stream')
 
-// Helper function to calculate the checksum BYTE value (not ASCII text!)
-// The checksum is a single byte that makes the sum of all bytes in the frame equal to 0 mod 256
-function calculateChecksumByte (lines) {
-  let buffer = Buffer.alloc(0)
-
-  // Build buffer the same way the parser does
-  lines.forEach(line => {
-    buffer = Buffer.concat([
-      buffer,
-      Buffer.from([0x0d, 0x0a]), // \r\n
-      Buffer.from(line)
-    ])
-  })
-
-  // Add the checksum line prefix: \r\n + "Checksum\t"
-  const checksumPrefix = Buffer.concat([
-    Buffer.from([0x0d, 0x0a]),
-    Buffer.from('Checksum\t')
-  ])
-
-  buffer = Buffer.concat([buffer, checksumPrefix])
-
-  // Calculate sum of all bytes so far
-  const sum = buffer.reduce((prev, curr) => (prev + curr) & 255, 0)
-
-  // The checksum byte value that will make the total sum 0 (mod 256)
-  return (256 - sum) & 255
-}
+const { checksumByte } = require('../../fixtures/vedirect-frames')
 
 // Helper to create a properly checksummed frame
 // Returns array of Buffer chunks INCLUDING the checksum as a SINGLE BYTE
 function createFrameWithChecksum (lines) {
-  const checksumByte = calculateChecksumByte(lines)
+  const byte = checksumByte(lines)
 
   // Create the checksum line: "Checksum\t" + single byte
   const checksumLine = Buffer.concat([
     Buffer.from('Checksum\t'),
-    Buffer.from([checksumByte]) // Single byte, not ASCII text!
+    Buffer.from([byte]) // Single byte, not ASCII text!
   ])
 
   return [
